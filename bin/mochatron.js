@@ -21,12 +21,20 @@ function main(options) {
     if (options.url) args.push(options.url);
   }
 
-  var app = spawn('electron "' + appScript
+  var child = spawn('electron "' + appScript
     + '" ' + args.join(' '));
 
-  app.stderr.pipe(process.stderr);
-  app.stdout.pipe(process.stdout);
-  return app;
+    child.stdout.pipe(process.stdout)
+    process.stdin.pipe(child.stdin)
+
+    child.stderr.on('data', function (data) {
+        var str = data.toString('utf8')
+        // it's Chromium, STFU
+        if (str.match(/^\[\d+\:\d+/)) return
+        process.stderr.write(data)
+    })
+    child.on('exit', function (code) { process.exit(code) })
+  return child;
 }
 
 if (require.main === module) { // Called directly.

@@ -25,8 +25,9 @@
   },
   "dependencies": {
     "commander": "^2.9.0",
-    "electron-prebuilt": "^0.36.2",
+    "electron": "^1.4.15",
     "npm-execspawn": "^1.2.1",
+    "sliced": "^1.0.1",
     "sprintf-js": "^1.0.3",
     "xtend": "^4.0.1"
   }
