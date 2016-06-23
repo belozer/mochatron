@@ -81,7 +81,7 @@ app.on('ready', function() {
 
 ipc.on('console', function(event, type, message) {
     // Skip the type for now.
-    console.log(message);
+    console.log.apply(this, message);
 });
 
 ipc.on('error', function(event, errorCount) {
