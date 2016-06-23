@@ -1,9 +1,8 @@
 'use strict';
 
 const path = require('path');
-var electron = require('electron');
-// Use sprintf because the browser console.log does it, but node does not.
-var sprintf = require('sprintf-js').sprintf;
+const sliced = require('sliced');
+const electron = require('electron');
 
 let reporter = undefined;
 if(process.env.MOCHA_PHANTOM_REPORTER){
@@ -44,46 +43,40 @@ function sendMsg(channel, type, message) {
 }
 
 // Taken from nightmare-js
-(function() {
+(function(){
     // listen for console.log
     var defaultLog = console.log;
     console.log = function() {
-        var message = sprintf.apply(this, [].slice.call(arguments));
-        // This 'if' is kind hacky, not sure why 'stdout:' is being output to the console, maybe it's ANSI related?
-        if (message !== 'stdout:') {
-            electron.ipcRenderer.send('console', 'log', message);
-            return defaultLog.apply(this, arguments);
-        }
+        sendMsg('console', 'log', sliced(arguments));
+        return defaultLog.apply(this, arguments);
     };
 
     // listen for console.warn
     var defaultWarn = console.warn;
     console.warn = function() {
-        var message = sprintf.apply(this, [].slice.call(arguments));
-        electron.ipcRenderer.send('console', 'warn', message);
+        sendMsg('console', 'warn', sliced(arguments));
         return defaultWarn.apply(this, arguments);
     };
 
     // listen for console.error
     var defaultError = console.error;
     console.error = function() {
-        var message = sprintf.apply(this, [].slice.call(arguments));
-        electron.ipcRenderer.send('console', 'error', message);
+        sendMsg('console', 'error', sliced(arguments));
         return defaultError.apply(this, arguments);
     };
 
     // overwrite the default alert
-    window.alert = function(message) {
-        electron.ipcRenderer.send('page', 'alert', message);
+    window.alert = function(message){
+        sendMsg('page', 'alert', message);
     };
 
     // overwrite the default prompt
-    window.prompt = function(message, defaultResponse) {
-        electron.ipcRenderer.send('page', 'prompt', message, defaultResponse);
-    };
+    window.prompt = function(message, defaultResponse){
+        sendMsg('page', 'prompt', message, defaultResponse);
+    }
 
     // overwrite the default confirm
-    window.confirm = function(message, defaultResponse) {
-        electron.ipcRenderer.send('page', 'confirm', message, defaultResponse);
-    };
-})();
+    window.confirm = function(message, defaultResponse){
+        sendMsg('page', 'confirm', message, defaultResponse);
+    }
+})()
