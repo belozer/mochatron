@@ -68,7 +68,7 @@ app.on('ready', function() {
     mainWindow.loadURL(config.url);
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
