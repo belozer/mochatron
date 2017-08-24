@@ -12,7 +12,7 @@ if(process.env.MOCHA_PHANTOM_REPORTER){
 var mochatron = {
     run: function(cb) {
         var mocha = window.mocha;
-        mocha.setup({ reporter: reporter || 'spec' });
+        mocha.setup({ reporter: reporter || 'spec', useColors : true });
         // Mocha needs a process.stdout.write in order to change the cursor position.
         Mocha.process = Mocha.process || {};
         Mocha.process.stdout = Mocha.process.stdout || process.stdout;
